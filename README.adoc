@@ -1,0 +1,5 @@
+# Gradle self training
+
+単なるGradleの練習用のレポジトリー
+
+これといって、面白いリポジトリーではなくて、ただGradleの素振りしてるだけ
