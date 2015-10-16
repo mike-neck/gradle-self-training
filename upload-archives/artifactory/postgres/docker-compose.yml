@@ -1,0 +1,8 @@
+pgsql:
+  image: mikeneck/pg-sql-for-artifactory
+artifactory:
+  image: mikeneck/artifactory-with-pg-sql
+  ports:
+    - "8864:8081"
+  links:
+    - pgsql
