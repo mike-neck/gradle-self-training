@@ -16,6 +16,20 @@ out/
 .DS_Store
 *~
 
-upload-archives/artifactory/home/
+upload-archives/artifactory/artifactory/home/backup/
+upload-archives/artifactory/artifactory/home/data/
+upload-archives/artifactory/artifactory/home/logs/
+
+upload-archives/artifactory/postgres/home/backup/
+upload-archives/artifactory/postgres/home/data/
+upload-archives/artifactory/postgres/home/logs/
+
+!upload-archives/artifactory/artifactory/home/backup/.gitkeep
+!upload-archives/artifactory/artifactory/home/data/.gitkeep
+!upload-archives/artifactory/artifactory/home/logs/.gitkeep
+
+!upload-archives/artifactory/postgres/home/backup/.gitkeep
+!upload-archives/artifactory/postgres/home/data/.gitkeep
+!upload-archives/artifactory/postgres/home/logs/.gitkeep
 
 memo.txt

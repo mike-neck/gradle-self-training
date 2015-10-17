@@ -6,3 +6,7 @@ artifactory:
     - "8864:8081"
   links:
     - pgsql
+  volumes:
+    - ./home/backup:/home/artifactory/artifactory/backup
+    - ./home/data:/home/artifactory/artifactory/data
+    - ./home/logs:/home/artifactory/artifactory/logs
