@@ -1,0 +1,5 @@
+gradle-build:
+  build: .
+  volumes:
+  - .:/home/gradle/project
+  - ../../caches/:/home/gradle/.gradle

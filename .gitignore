@@ -36,3 +36,5 @@ upload-archives/artifactory/postgres/home/logs/
 memo.txt
 
 codic.properties
+
+caches/
