@@ -1,5 +1,6 @@
 .gradle/
 !gradle/wrapper/*.jar
+build/
 
 *.jar
 *.class
@@ -33,3 +34,5 @@ upload-archives/artifactory/postgres/home/logs/
 !upload-archives/artifactory/postgres/home/logs/.gitkeep
 
 memo.txt
+
+codic.properties
