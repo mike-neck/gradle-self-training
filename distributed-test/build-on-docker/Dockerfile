@@ -14,4 +14,4 @@ RUN \
 
 USER gradle
 
-ENTRYPOINT ["gradle", "build"]
+ENTRYPOINT ["gradle", "clean","build"]
