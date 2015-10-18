@@ -15,12 +15,14 @@
  */
 package dist.test
 
+import dist.test.model.Docker
 import dist.test.task.ClassGeneration
 import dist.test.task.DockerCompose
 import dist.test.task.DockerFile
 import dist.test.util.TestTaskCreator
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.tasks.Exec
 
 class PluginImpl implements Plugin<Project> {
 
@@ -53,6 +55,17 @@ class PluginImpl implements Plugin<Project> {
         }
 
         // run docker-compose
+        project.tasks.create(TaskNames.RUN_DOCKER.taskName, Exec).configure {
+            description = 'Run tests in parallel with docker containers'
+            group = 'distributed test'
+            dependsOn project.tasks.findByName('testClasses'), TaskNames.DOCKER_PREPARE.taskName
+            workingDir Docker.dockerDir(project)
+            commandLine 'docker-compose', 'up'
+            doLast {
+                execResult.assertNormalExitValue()
+            }
+        }
+
         // summarize test results
         // bundle task graph
     }

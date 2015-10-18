@@ -20,7 +20,8 @@ public enum TaskNames {
     GENERATE_TESTS("generateTestSources"),
     DOCKER_PREPARE("dockerPrepare"),
     DOCKER_COMPOSE("writeDockerCompose"),
-    DOCKER_FILE("writeDockerfile");
+    DOCKER_FILE("writeDockerfile"),
+    RUN_DOCKER("runDocker");
 
     private final String taskName;
 
