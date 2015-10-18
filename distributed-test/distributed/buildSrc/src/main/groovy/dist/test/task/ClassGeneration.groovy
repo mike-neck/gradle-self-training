@@ -21,7 +21,7 @@ import groovy.text.SimpleTemplateEngine
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleScriptException
 import org.gradle.api.file.FileCollection
-import org.gradle.api.tasks.OutputFile
+import org.gradle.api.tasks.OutputFiles
 import org.gradle.api.tasks.TaskAction
 
 import static dist.test.Util.template
@@ -64,14 +64,15 @@ class ClassGeneration extends DefaultTask {
     }
 
     private void setOutFile() throws GradleScriptException {
+        def destinationDir = destDir
         javaFiles = Names.values().collect {pkg ->
             Names.values().collect {type ->
-                new JavaFile(destDir, pkg, type)
+                new JavaFile(destinationDir, pkg, type)
             }
         }.flatten()
     }
 
-    @OutputFile
+    @OutputFiles
     FileCollection getJavaFile() {
         if (javaFiles == null) {
             setOutFile()
