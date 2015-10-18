@@ -32,20 +32,28 @@ class TestTaskCreator {
         this.names = names
     }
 
-    File file(Object name) {
+    private File file(Object name) {
         project.file(name)
+    }
+
+    String getTaskName() {
+        "${names.breeds}Test"
     }
 
     void doWork() {
         def reportBaseDir = "${project.buildDir}/dist-test/${names.breeds}"
-        project.tasks.create("${names.breeds}Test", Test).configure {
+        project.tasks.create(this.taskName, Test).configure {
             group = GROUP
             description = "Runs tests under ${names.breeds} package."
+            dependsOn project.tasks.findByName('testClasses')
             include "**/${names.breeds}/**/*"
             maxParallelForks = 2
             reports.html.destination = "${reportBaseDir}/html"
             reports.junitXml.destination = "${reportBaseDir}/xml"
             binResultsDir = file("${reportBaseDir}/bin")
+        }
+        project.tasks.findByName('test').configure {
+            exclude "**/${names.breeds}/**/*"
         }
     }
 }

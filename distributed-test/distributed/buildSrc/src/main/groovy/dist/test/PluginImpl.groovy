@@ -15,6 +15,8 @@
  */
 package dist.test
 
+import dist.test.task.ClassGeneration
+import dist.test.util.TestTaskCreator
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
@@ -22,6 +24,18 @@ class PluginImpl implements Plugin<Project> {
 
     @Override
     void apply(Project project) {
+        if (!project.pluginManager.hasPlugin('java')) {
+            project.pluginManager.apply('java')
+        }
+        configureClassGeneration(project)
+        def testTasks = Names.values().collect {
+            new TestTaskCreator(project, it)
+        }
+        testTasks.each {it.doWork()}
+    }
 
+    protected void configureClassGeneration(Project project) {
+        def task = project.tasks.create('generateTestSources', ClassGeneration)
+        project.tasks.findByPath('compileTestJava').dependsOn task
     }
 }
