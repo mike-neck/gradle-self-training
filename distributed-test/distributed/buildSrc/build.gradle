@@ -1,0 +1,24 @@
+plugins {
+    id 'groovy'
+    id 'idea'
+}
+
+ext {
+    jdk = '1.8'
+    encoding = 'UTF-8'
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile gradleApi()
+    testCompile 'org.spockframework:spock-core:1.0-groovy-2.3'
+}
+
+tasks.withType(JavaCompile) {
+    sourceCompatibility = jdk
+    targetCompatibility = jdk
+    options.encoding = encoding
+}
