@@ -19,6 +19,7 @@ import dist.test.model.Docker
 import dist.test.task.ClassGeneration
 import dist.test.task.DockerCompose
 import dist.test.task.DockerFile
+import dist.test.task.RunDockerCompose
 import dist.test.util.TestTaskCreator
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -55,15 +56,10 @@ class PluginImpl implements Plugin<Project> {
         }
 
         // run docker-compose
-        project.tasks.create(TaskNames.RUN_DOCKER.taskName, Exec).configure {
+        project.tasks.create(TaskNames.RUN_DOCKER.taskName, RunDockerCompose).configure {
             description = 'Run tests in parallel with docker containers'
             group = 'distributed test'
             dependsOn project.tasks.findByName('testClasses'), TaskNames.DOCKER_PREPARE.taskName
-            workingDir Docker.dockerDir(project)
-            commandLine 'docker-compose', 'up'
-            doLast {
-                execResult.assertNormalExitValue()
-            }
         }
 
         // summarize test results
