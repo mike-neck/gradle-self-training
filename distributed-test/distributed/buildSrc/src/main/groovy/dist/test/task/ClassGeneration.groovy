@@ -15,7 +15,7 @@
  */
 package dist.test.task
 
-import dist.test.Names
+import dist.test.model.Names
 import dist.test.model.JavaFile
 import groovy.text.SimpleTemplateEngine
 import org.gradle.api.DefaultTask

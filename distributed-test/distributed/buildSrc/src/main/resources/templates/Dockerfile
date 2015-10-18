@@ -1,21 +1,29 @@
 FROM mikeneck/gradle
 
+USER root
+
 RUN \
   mkdir -p /home/gradle/.gradle/caches/modules-2/files-2.1 && \
   mkdir -p /home/gradle/.gradle/caches/modules-2/metadata-2.15 && \
-  mkdir /home/gradle/project
+  mkdir -p /home/gradle/project/src && \
+  mkdir -p /home/gradle/project/buildSrc && \
+  mkdir -p /home/gradle/project/build
 
 VOLUME /home/gradle/.gradle/caches/modules-2/files-2.1
 VOLUME /home/gradle/.gradle/caches/modules-2/metadata-2.15
-VOLUME /home/gradle/project
+VOLUME /home/gradle/project/src
+VOLUME /home/gradle/project/build
 WORKDIR /home/gradle/project
 
+ADD buildSrc/ /home/gradle/project/buildSrc
+ADD build.gradle /home/gradle/project/build.gradle
+ADD settings.gradle /home/gradle/project/settings.gradle
+ADD gradle.properties /home/gradle/project/gradle.properties
+
 RUN \
-  chown gradle /home/gradle/.gradle && \
-  chown gradle /home/gradle/.gradle/caches && \
-  chown gradle /home/gradle/.gradle/caches/modules-2 && \
-  chown gradle /home/gradle/.gradle/caches/modules-2/files-2.1 && \
-  chown gradle /home/gradle/.gradle/caches/modules-2/metadata-2.15 && \
-  chown gradle /home/gradle/project
+  mkdir -p /home/gradle/project/buildSrc/.gradle && \
+  chown -R gradle -R /home/gradle/.gradle && \
+  chown -R gradle /home/gradle/project && \
+  chown -R gradle /home/gradle/project/build
 
 USER gradle

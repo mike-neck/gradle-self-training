@@ -15,7 +15,6 @@
  */
 package dist.test.model
 
-import dist.test.Names
 import dist.test.task.ClassGeneration
 
 class JavaFile {

@@ -16,6 +16,7 @@
 package dist.test
 
 import dist.test.model.Docker
+import dist.test.model.Groups
 import dist.test.task.ClassGeneration
 import dist.test.task.DockerCompose
 import dist.test.task.DockerFile
@@ -23,6 +24,7 @@ import dist.test.task.RunDockerCompose
 import dist.test.util.TestTaskCreator
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.Exec
 
 class PluginImpl implements Plugin<Project> {
@@ -39,20 +41,38 @@ class PluginImpl implements Plugin<Project> {
         configureClassGeneration(project)
 
         // distributed test tasks
-        def testTasks = Names.values().collect {
+        def testTasks = Groups.values().collect {
             new TestTaskCreator(project, it)
         }
         testTasks.each {it.doWork()}
 
-        // docker-compose.yml
-        project.tasks.create(TaskNames.DOCKER_COMPOSE.taskName, DockerCompose)
+        // copy project files
+        project.tasks.create(TaskNames.COPY_PROJECT_FILES.taskName, Copy).configure {
+            from project.files('build.gradle', 'settings.gradle', 'gradle.properties')
+            from('buildSrc') {
+                exclude './gradle/**/*'
+                exclude 'out/**/*'
+                into 'buildSrc'
+            }
+            into Docker.dockerDir(project)
+        }
 
         // Dockerfile
         project.tasks.create(TaskNames.DOCKER_FILE.taskName, DockerFile)
 
+        // docker build
+        project.tasks.create(TaskNames.DOCKER_BUILD.taskName, Exec).configure {
+            dependsOn TaskNames.COPY_PROJECT_FILES.taskName, TaskNames.DOCKER_FILE.taskName
+            workingDir Docker.dockerDir(project)
+            commandLine 'docker', 'build', '-t', 'gradle-dist-test', '.'
+        }
+
+        // docker-compose.yml
+        project.tasks.create(TaskNames.DOCKER_COMPOSE.taskName, DockerCompose)
+
         // prepare docker
         project.tasks.create(TaskNames.DOCKER_PREPARE.taskName) {
-            dependsOn TaskNames.DOCKER_COMPOSE.taskName, TaskNames.DOCKER_FILE.taskName
+            dependsOn TaskNames.DOCKER_BUILD.taskName, TaskNames.DOCKER_COMPOSE.taskName
         }
 
         // run docker-compose
@@ -66,7 +86,7 @@ class PluginImpl implements Plugin<Project> {
         // bundle task graph
     }
 
-    protected void configureClassGeneration(Project project) {
+    private static void configureClassGeneration(Project project) {
         def task = project.tasks.create(TaskNames.GENERATE_TESTS.taskName, ClassGeneration)
         project.tasks.findByPath('compileTestJava').dependsOn task
     }

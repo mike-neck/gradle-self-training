@@ -1,7 +1,8 @@
-${container}:
-  build: ../
+gradle:
+  image: gradle-dist-test
   volumes:
-    - ../../..:/home/gradle/project
+    - ../../../src:/home/gradle/project/src
+    - ../../../build:home/gradle/project/build
     - ../../../caches/modules-2/files-2.1:/home/gradle/.gradle/caches/modules-2/files-2.1
     - ../../../caches/modules-2/metadata-2.15:/home/gradle/.gradle/caches/modules-2/metadata-2.15
-  command: gradle ${taskName} --info
+  command: gradle ${taskName} --stacktrace

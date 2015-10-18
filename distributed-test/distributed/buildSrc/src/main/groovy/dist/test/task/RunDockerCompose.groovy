@@ -15,7 +15,8 @@
  */
 package dist.test.task
 
-import dist.test.Names
+import dist.test.model.Groups
+import dist.test.model.Names
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.TaskAction
@@ -51,7 +52,7 @@ class RunDockerCompose extends DefaultTask {
                 logger.lifecycle(stdOut)
             }
         }] as Runnable)
-        def results = Names.values().collect {Names n ->
+        def results = Groups.values().collect {Groups n ->
             [
                     callable: [call: {
                         def command = "docker-compose -f ${dockerChildDir(project, n)}/docker-compose.yml up"
@@ -60,20 +61,20 @@ class RunDockerCompose extends DefaultTask {
                         blockingQueue.put(process.text)
                         process.waitFor()
                     }] as Callable<Integer>,
-                    names: n
+                    groups: n
             ]
         }.collect {
             Future<Integer> future = execService.submit(it.callable)
-            [future: future, names: it.names]
+            [future: future, groups: it.groups]
         }
         def failed = results.collect {
-            [exit: it.future.get(), names: it.names]
+            [exit: it.future.get(), groups: it.groups]
         }.findAll {
             it.exit != 0
         }
         if (failed.size() > 0) {
             def tests = failed.collect {
-                "${it.names.breeds}Test[exit value: ${it.exit}]"
+                "${it.groups.testTaskName}[exit value: ${it.exit}]"
             }.each {
                 logger.info it
             }.join(', ')

@@ -1,12 +1,12 @@
 /*
  * Copyright 2015 Shinya Mochida
- * 
+ *
  * Licensed under the Apache License,Version2.0(the"License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,software
  * Distributed under the License is distributed on an"AS IS"BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,either express or implied.
@@ -15,7 +15,8 @@
  */
 package dist.test.util
 
-import dist.test.Names
+import dist.test.model.Groups
+import dist.test.model.Names
 import org.gradle.api.Project
 import org.gradle.api.tasks.testing.Test
 
@@ -25,11 +26,11 @@ class TestTaskCreator {
 
     private final Project project
 
-    private final Names names;
+    private final Groups grp;
 
-    TestTaskCreator(Project project, Names names) {
+    TestTaskCreator(Project project, Groups grp) {
         this.project = project
-        this.names = names
+        this.grp = grp
     }
 
     private File file(Object name) {
@@ -37,18 +38,21 @@ class TestTaskCreator {
     }
 
     void doWork() {
-        def reportBaseDir = "${project.buildDir}/dist-test/${names.breeds}"
-        project.tasks.create(names.taskName, Test).configure {
+        def reportBaseDir = "${project.buildDir}/dist-test/${grp.lowerCase}"
+
+        def testTask = project.tasks.create(grp.testTaskName, Test)
+        testTask.configure {
             group = GROUP
-            description = "Runs tests under ${names.breeds} package."
-            include "**/${names.breeds}/**/*"
+            def names = Names.byGroup(grp)
+            description = "Runs tests under [${names.collect {it.breeds}.join(', ')}] package."
+            include names.collect {"**/${it.breeds}/**/*"}
             maxParallelForks = 2
             reports.html.destination = "${reportBaseDir}/html"
             reports.junitXml.destination = "${reportBaseDir}/xml"
             binResultsDir = file("${reportBaseDir}/bin")
         }
         project.tasks.findByName('test').configure {
-            exclude "**/${names.breeds}/**/*"
+            exclude Names.byGroup(grp).collect {"**/${it.breeds}/**/*"}
         }
     }
 }

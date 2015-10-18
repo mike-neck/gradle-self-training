@@ -15,7 +15,7 @@
  */
 package dist.test.task
 
-import dist.test.Names
+import dist.test.model.Groups
 import groovy.text.SimpleTemplateEngine
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
@@ -32,12 +32,11 @@ class DockerCompose extends DefaultTask {
 
     @TaskAction
     void writeDockerCompose() {
-        Names.values().each {
+        Groups.values().each {
             prepareDockerChildDir(project, it)
             def url = template(TEMPLATE)
             def map = [
-                    container: it.breeds,
-                    taskName: it.taskName
+                    taskName: it.testTaskName
             ]
             def contents = new SimpleTemplateEngine().createTemplate(url).make(map)
             def writer = project.file("${dockerChildDir(project, it)}/${DOCKER_COMPOSE}").newWriter('UTF-8')

@@ -13,25 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package dist.test;
+package dist.test.model;
 
-public enum TaskNames {
+public enum Groups {
 
-    GENERATE_TESTS("generateTestSources"),
-    COPY_PROJECT_FILES("copyProjectFiles"),
-    DOCKER_PREPARE("dockerPrepare"),
-    DOCKER_COMPOSE("writeDockerCompose"),
-    DOCKER_FILE("writeDockerfile"),
-    DOCKER_BUILD("dockerBuild"),
-    RUN_DOCKER("runDocker");
+    NORTHERN, SOUTHERN, WESTERN;
 
-    private final String taskName;
-
-    TaskNames(String taskName) {
-        this.taskName = taskName;
+    public String getTestTaskName() {
+        return getLowerCase() + "Test";
     }
 
-    public String getTaskName() {
-        return taskName;
+    public String getLowerCase() {
+        return toString().toLowerCase();
     }
 }

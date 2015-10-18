@@ -15,7 +15,6 @@
  */
 package dist.test.model
 
-import dist.test.Names
 import org.gradle.api.Project
 
 final class Docker {
@@ -28,8 +27,8 @@ final class Docker {
         "${project.buildDir}/${DIR_NAME}"
     }
 
-    static String dockerChildDir(Project project, Names child) {
-        "${project.buildDir}/${DIR_NAME}/${child.breeds}"
+    static String dockerChildDir(Project project, Groups child) {
+        "${project.buildDir}/${DIR_NAME}/${child.toString().toLowerCase()}"
     }
 
     static void prepareDockerDir(Project project) {
@@ -42,7 +41,7 @@ final class Docker {
         }
     }
 
-    static void prepareDockerChildDir(Project project, Names child) {
+    static void prepareDockerChildDir(Project project, Groups child) {
         def file = {def fileName ->
             project.file(fileName)
         }
