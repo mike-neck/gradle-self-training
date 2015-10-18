@@ -16,26 +16,41 @@
 package dist.test
 
 import dist.test.task.ClassGeneration
+import dist.test.task.DockerFile
 import dist.test.util.TestTaskCreator
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
 class PluginImpl implements Plugin<Project> {
 
+    static final String DOCKER = 'dockerPrepare'
+
     @Override
     void apply(Project project) {
         if (!project.pluginManager.hasPlugin('java')) {
             project.pluginManager.apply('java')
         }
+
+        // class generation
         configureClassGeneration(project)
+
+        // distributed test tasks
         def testTasks = Names.values().collect {
             new TestTaskCreator(project, it)
         }
         testTasks.each {it.doWork()}
+
+        // docker-compose.yml
+        // Dockerfile
+        project.tasks.create(TaskNames.DOCKER_FILE.taskName, DockerFile)
+
+        // run docker-compose
+        // summarize test results
+        // bundle task graph
     }
 
     protected void configureClassGeneration(Project project) {
-        def task = project.tasks.create('generateTestSources', ClassGeneration)
+        def task = project.tasks.create(TaskNames.GENERATE_TESTS.taskName, ClassGeneration)
         project.tasks.findByPath('compileTestJava').dependsOn task
     }
 }
