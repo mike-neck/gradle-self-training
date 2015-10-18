@@ -38,3 +38,6 @@ memo.txt
 codic.properties
 
 caches/
+
+distributed-test/distributed/src/test/java/sample/tests/**/*.java
+!distributed-test/distributed/src/test/java/sample/tests/.gitkeep

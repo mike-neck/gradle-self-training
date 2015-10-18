@@ -1,0 +1,40 @@
+package ${packageName};
+
+import org.junit.After;
+import org.junit.Rule;
+import org.junit.Test;
+import sample.TestTime;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+public class ${type} {
+
+    @Rule
+    public final TestTime testTime = new TestTime();
+
+    @After
+    public void teardown() {
+        System.out.println(testTime.getStamp());
+    }
+
+    @Test
+    public void testName() throws InterruptedException {
+        Thread.sleep(${time});
+        assertThat(testTime.getTestName())
+                .isEqualTo("testName");
+    }
+
+    @Test
+    public void className() throws InterruptedException {
+        Thread.sleep(${time});
+        assertThat(testTime.getClassName())
+                .isEqualTo("${packageName}.${type}");
+    }
+
+    @Test
+    public void stamp() throws InterruptedException {
+        Thread.sleep(${time});
+        assertThat(testTime.getStamp())
+                .contains("${packageName}.${type}#stamp");
+    }
+}
