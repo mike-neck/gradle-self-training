@@ -20,7 +20,6 @@ import dist.test.model.JavaFile
 import groovy.text.SimpleTemplateEngine
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleScriptException
-import org.gradle.api.PathValidation
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
@@ -65,10 +64,6 @@ class ClassGeneration extends DefaultTask {
     }
 
     private void setOutFile() throws GradleScriptException {
-        if (!project.file(destDir, PathValidation.DIRECTORY).exists()) {
-            def e = new FileNotFoundException(destDir)
-            throw new GradleScriptException("Output directory not found.", e)
-        }
         javaFiles = Names.values().collect {pkg ->
             Names.values().collect {type ->
                 new JavaFile(destDir, pkg, type)
