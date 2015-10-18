@@ -44,6 +44,10 @@ public enum Names {
         return toTypeName(breeds);
     }
 
+    public String getTaskName() {
+        return breeds + "Test";
+    }
+
     public boolean isFast() {
         return fast;
     }

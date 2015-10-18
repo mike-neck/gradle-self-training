@@ -16,6 +16,7 @@
 package dist.test
 
 import dist.test.task.ClassGeneration
+import dist.test.task.DockerCompose
 import dist.test.task.DockerFile
 import dist.test.util.TestTaskCreator
 import org.gradle.api.Plugin
@@ -41,8 +42,15 @@ class PluginImpl implements Plugin<Project> {
         testTasks.each {it.doWork()}
 
         // docker-compose.yml
+        project.tasks.create(TaskNames.DOCKER_COMPOSE.taskName, DockerCompose)
+
         // Dockerfile
         project.tasks.create(TaskNames.DOCKER_FILE.taskName, DockerFile)
+
+        // prepare docker
+        project.tasks.create(TaskNames.DOCKER_PREPARE.taskName) {
+            dependsOn TaskNames.DOCKER_COMPOSE.taskName, TaskNames.DOCKER_FILE.taskName
+        }
 
         // run docker-compose
         // summarize test results

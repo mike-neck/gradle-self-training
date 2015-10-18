@@ -36,16 +36,11 @@ class TestTaskCreator {
         project.file(name)
     }
 
-    String getTaskName() {
-        "${names.breeds}Test"
-    }
-
     void doWork() {
         def reportBaseDir = "${project.buildDir}/dist-test/${names.breeds}"
-        project.tasks.create(this.taskName, Test).configure {
+        project.tasks.create(names.taskName, Test).configure {
             group = GROUP
             description = "Runs tests under ${names.breeds} package."
-            dependsOn project.tasks.findByName('testClasses')
             include "**/${names.breeds}/**/*"
             maxParallelForks = 2
             reports.html.destination = "${reportBaseDir}/html"

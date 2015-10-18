@@ -23,7 +23,17 @@ final class Docker {
 
     static final String DIR_NAME = 'docker'
 
-    static String destinationDir(Project project) {
+    static String dockerDir(Project project) {
         "${project.buildDir}/${DIR_NAME}"
+    }
+
+    static void prepareDockerDir(Project project) {
+        def file = {def fileName ->
+            project.file(fileName)
+        }
+        def dir = file(dockerDir(project))
+        if (!dir.exists()) {
+            dir.mkdirs()
+        }
     }
 }

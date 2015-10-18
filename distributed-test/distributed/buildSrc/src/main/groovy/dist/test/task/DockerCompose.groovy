@@ -15,36 +15,35 @@
  */
 package dist.test.task
 
+import dist.test.Names
+import groovy.text.SimpleTemplateEngine
 import org.gradle.api.DefaultTask
-import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 
 import static dist.test.Util.template
 import static dist.test.model.Docker.dockerDir
 import static dist.test.model.Docker.prepareDockerDir
 
-class DockerFile extends DefaultTask {
+class DockerCompose extends DefaultTask {
 
-    static final String DOCKER_FILE = 'Dockerfile'
+    static final String DOCKER_COMPOSE = 'docker-compose.yml'
 
-    @OutputFile
-    File getOutputFile() {
-        def outputFile = getOutputFileName()
-        file(outputFile)
-    }
-
-    private String getOutputFileName() {
-        "${dockerDir(project)}/${DOCKER_FILE}"
-    }
-
-    private File file(Object fileName) {
-        project.file(fileName)
-    }
+    static final String TEMPLATE = 'docker-compose.template'
 
     @TaskAction
-    void writeDockerFile() {
-        def url = template(DOCKER_FILE)
+    void writeDockerCompose() {
+        def writer = new StringWriter()
+        Names.values().each {
+            def url = template(TEMPLATE)
+            def map = [
+                    container: it.breeds,
+                    taskName: it.taskName
+            ]
+            def contents = new SimpleTemplateEngine().createTemplate(url).make(map)
+            contents.writeTo(writer)
+        }
         prepareDockerDir(project)
-        this.outputFile.write(url.text, 'UTF-8')
+        def dockerCompose = project.file("${dockerDir(project)}/${DOCKER_COMPOSE}")
+        dockerCompose.write(writer.toString(), 'UTF-8')
     }
 }
