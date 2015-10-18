@@ -1,6 +1,6 @@
 ${container}:
-  build: .
+  build: ../
   volumes:
-    - ../..:/home/gradle/project
-    - ../../../../caches/:/home/gradle/.gradle
+    - ../../..:/home/gradle/project
+    - ../../../../../caches/:/home/gradle/.gradle
   command: gradle ${taskName}

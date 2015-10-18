@@ -21,8 +21,8 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 
 import static dist.test.Util.template
-import static dist.test.model.Docker.dockerDir
-import static dist.test.model.Docker.prepareDockerDir
+import static dist.test.model.Docker.dockerChildDir
+import static dist.test.model.Docker.prepareDockerChildDir
 
 class DockerCompose extends DefaultTask {
 
@@ -32,18 +32,16 @@ class DockerCompose extends DefaultTask {
 
     @TaskAction
     void writeDockerCompose() {
-        def writer = new StringWriter()
         Names.values().each {
+            prepareDockerChildDir(project, it)
             def url = template(TEMPLATE)
             def map = [
                     container: it.breeds,
                     taskName: it.taskName
             ]
             def contents = new SimpleTemplateEngine().createTemplate(url).make(map)
+            def writer = project.file("${dockerChildDir(project, it)}/${DOCKER_COMPOSE}").newWriter('UTF-8')
             contents.writeTo(writer)
         }
-        prepareDockerDir(project)
-        def dockerCompose = project.file("${dockerDir(project)}/${DOCKER_COMPOSE}")
-        dockerCompose.write(writer.toString(), 'UTF-8')
     }
 }
