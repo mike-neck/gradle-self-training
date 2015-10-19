@@ -24,6 +24,7 @@ public enum TaskNames {
     DOCKER_FILE("writeDockerfile"),
     DOCKER_BUILD("dockerBuild"),
     RUN_TEST_ON_DOCKER("runTestOnDocker"),
+    DISTRIBUTE_TEST("distTest"),
     TEST_REPORT("reportDistributedTest");
 
     private final String taskName;

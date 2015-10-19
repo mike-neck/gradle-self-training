@@ -73,7 +73,6 @@ class PluginImpl implements Plugin<Project> {
         // run docker
         project.tasks.create(TaskNames.RUN_TEST_ON_DOCKER.taskName, RunTestOnDocker).configure {
             description = 'Run test int parallel with docker containers.'
-            group = 'distributed test'
             dependsOn TaskNames.DOCKER_PREPARE.taskName
         }
 
@@ -87,6 +86,10 @@ class PluginImpl implements Plugin<Project> {
         }
 
         // bundle task graph
+        project.tasks.create(TaskNames.DISTRIBUTE_TEST.taskName).configure {
+            dependsOn TaskNames.TEST_REPORT.taskName
+            group = 'distributed test'
+        }
     }
 
     private static Task configureCreateTestResultsDir(Project project) {
