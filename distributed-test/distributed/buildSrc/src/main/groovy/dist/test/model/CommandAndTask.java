@@ -15,19 +15,22 @@
  */
 package dist.test.model;
 
-public enum Groups {
+public class CommandAndTask {
 
-    NORTHERN, SOUTHERN, WESTERN;
+    private final String command;
 
-    public String getTestTaskName() {
-        return getLowerCase() + "Test";
+    private final Groups groups;
+
+    public CommandAndTask(String command, Groups groups) {
+        this.command = command;
+        this.groups = groups;
     }
 
-    public String getLowerCase() {
-        return toString().toLowerCase();
+    public String getCommand() {
+        return command;
     }
 
-    public String getRunningName() {
-        return "gradle_" + getLowerCase();
+    public Groups getGroups() {
+        return groups;
     }
 }

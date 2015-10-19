@@ -29,6 +29,8 @@ test {
     maxParallelForks = 4
 }
 
+clean.dependsOn 'cleanGenerateTestSources'
+
 idea {
     project {
         jdkName = jdk

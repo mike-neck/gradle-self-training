@@ -24,6 +24,12 @@ class TestTaskCreator {
 
     static final String GROUP = 'distributed test'
 
+    static final String RESULT_DIR = 'dist-test'
+
+    static String baseDirName(Project prj) {
+        "${prj.buildDir}/${RESULT_DIR}"
+    }
+
     private final Project project
 
     private final Groups grp;
@@ -38,7 +44,7 @@ class TestTaskCreator {
     }
 
     void doWork() {
-        def reportBaseDir = "${project.buildDir}/dist-test/${grp.lowerCase}"
+        def reportBaseDir = "${baseDirName(project)}/${grp.lowerCase}"
 
         def testTask = project.tasks.create(grp.testTaskName, Test)
         testTask.configure {

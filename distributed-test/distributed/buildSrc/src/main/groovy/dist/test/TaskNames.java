@@ -19,11 +19,14 @@ public enum TaskNames {
 
     GENERATE_TESTS("generateTestSources"),
     COPY_PROJECT_FILES("copyProjectFiles"),
-    DOCKER_PREPARE("dockerPrepare"),
-    DOCKER_COMPOSE("writeDockerCompose"),
+    CREATE_TEST_RESULTS_DIR("createTestResultsDir"),
+    DOCKER_PREPARE("prepareDocker"),
     DOCKER_FILE("writeDockerfile"),
     DOCKER_BUILD("dockerBuild"),
-    RUN_DOCKER("runDocker");
+    RUN_TEST_ON_DOCKER("runTestOnDocker"),
+    DISTRIBUTE_TEST("distTest"),
+    REMOVE_CONTAINER("removeContainer"),
+    TEST_REPORT("reportDistributedTest");
 
     private final String taskName;
 

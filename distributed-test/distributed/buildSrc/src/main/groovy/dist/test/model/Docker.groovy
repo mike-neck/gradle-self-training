@@ -23,6 +23,8 @@ final class Docker {
 
     static final String DIR_NAME = 'docker'
 
+    static final String IMAGE_NAME = 'gradle-dist-test'
+
     static String dockerDir(Project project) {
         "${project.buildDir}/${DIR_NAME}"
     }
