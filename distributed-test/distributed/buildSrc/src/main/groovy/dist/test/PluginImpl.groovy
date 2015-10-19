@@ -21,6 +21,7 @@ import dist.test.task.ClassGeneration
 import dist.test.task.DockerCompose
 import dist.test.task.DockerFile
 import dist.test.task.RunDockerCompose
+import dist.test.task.RunTestOnDocker
 import dist.test.util.TestTaskCreator
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -60,20 +61,17 @@ class PluginImpl implements Plugin<Project> {
         project.tasks.create(TaskNames.DOCKER_BUILD.taskName, Exec).configure {
             dependsOn TaskNames.COPY_PROJECT_FILES.taskName, TaskNames.DOCKER_FILE.taskName, TaskNames.CREATE_TEST_RESULTS_DIR.taskName
             workingDir Docker.dockerDir(project)
-            commandLine 'docker', 'build', '-t', 'gradle-dist-test', '.'
+            commandLine 'docker', 'build', '-t', Docker.IMAGE_NAME, '.'
         }
-
-        // docker-compose.yml
-        project.tasks.create(TaskNames.DOCKER_COMPOSE.taskName, DockerCompose)
 
         // prepare docker
         project.tasks.create(TaskNames.DOCKER_PREPARE.taskName) {
-            dependsOn TaskNames.DOCKER_BUILD.taskName, TaskNames.DOCKER_COMPOSE.taskName
+            dependsOn TaskNames.DOCKER_BUILD.taskName
         }
 
-        // run docker-compose
-        project.tasks.create(TaskNames.RUN_DOCKER.taskName, RunDockerCompose).configure {
-            description = 'Run tests in parallel with docker containers'
+        // run docker
+        project.tasks.create(TaskNames.RUN_TEST_ON_DOCKER.taskName, RunTestOnDocker).configure {
+            description = 'Run test int parallel with docker containers.'
             group = 'distributed test'
             dependsOn TaskNames.DOCKER_PREPARE.taskName
         }

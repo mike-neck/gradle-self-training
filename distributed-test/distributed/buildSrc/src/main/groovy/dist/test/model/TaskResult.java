@@ -15,19 +15,22 @@
  */
 package dist.test.model;
 
-public enum Groups {
+public class TaskResult {
 
-    NORTHERN, SOUTHERN, WESTERN;
+    private final Groups groups;
 
-    public String getTestTaskName() {
-        return getLowerCase() + "Test";
+    private final boolean success;
+
+    public TaskResult(Groups groups, boolean success) {
+        this.groups = groups;
+        this.success = success;
     }
 
-    public String getLowerCase() {
-        return toString().toLowerCase();
+    public Groups getGroups() {
+        return groups;
     }
 
-    public String getRunningName() {
-        return "gradle_" + getLowerCase();
+    public boolean isSuccess() {
+        return success;
     }
 }
