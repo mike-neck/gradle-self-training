@@ -24,6 +24,7 @@ import dist.test.task.RunDockerCompose
 import dist.test.util.TestTaskCreator
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.Exec
 
@@ -47,22 +48,17 @@ class PluginImpl implements Plugin<Project> {
         testTasks.each {it.doWork()}
 
         // copy project files
-        project.tasks.create(TaskNames.COPY_PROJECT_FILES.taskName, Copy).configure {
-            from project.files('build.gradle', 'settings.gradle', 'gradle.properties')
-            from('buildSrc') {
-                exclude './gradle/**/*'
-                exclude 'out/**/*'
-                into 'buildSrc'
-            }
-            into Docker.dockerDir(project)
-        }
+        configureCopyProjectFiles(project)
+
+        // create test results directory
+        configureCreateTestResultsDir(project)
 
         // Dockerfile
         project.tasks.create(TaskNames.DOCKER_FILE.taskName, DockerFile)
 
         // docker build
         project.tasks.create(TaskNames.DOCKER_BUILD.taskName, Exec).configure {
-            dependsOn TaskNames.COPY_PROJECT_FILES.taskName, TaskNames.DOCKER_FILE.taskName
+            dependsOn TaskNames.COPY_PROJECT_FILES.taskName, TaskNames.DOCKER_FILE.taskName, TaskNames.CREATE_TEST_RESULTS_DIR.taskName
             workingDir Docker.dockerDir(project)
             commandLine 'docker', 'build', '-t', 'gradle-dist-test', '.'
         }
@@ -79,15 +75,57 @@ class PluginImpl implements Plugin<Project> {
         project.tasks.create(TaskNames.RUN_DOCKER.taskName, RunDockerCompose).configure {
             description = 'Run tests in parallel with docker containers'
             group = 'distributed test'
-            dependsOn project.tasks.findByName('testClasses'), TaskNames.DOCKER_PREPARE.taskName
+            dependsOn TaskNames.DOCKER_PREPARE.taskName
         }
 
         // summarize test results
         // bundle task graph
     }
 
+    private static Task configureCreateTestResultsDir(Project project) {
+        project.tasks.create(TaskNames.CREATE_TEST_RESULTS_DIR.taskName).configure {
+            def dir = project.file(TestTaskCreator.baseDirName(project))
+            outputs.upToDateWhen {
+                dir.exists()
+            }
+            doLast {
+                if (!dir.exists()) {
+                    dir.mkdirs()
+                }
+            }
+        }
+    }
+
+    private static Task configureCopyProjectFiles(Project project) {
+        project.tasks.create(TaskNames.COPY_PROJECT_FILES.taskName, Copy).configure {
+            from project.files('build.gradle', 'settings.gradle', 'gradle.properties')
+            from('buildSrc') {
+                exclude '.gradle/'
+                exclude 'build/'
+                exclude 'out/'
+                exclude 'buildSrc.i*'
+                into 'buildSrc'
+            }
+            from('src/') {
+                includeEmptyDirs = false
+                into 'src'
+            }
+            into Docker.dockerDir(project)
+        }
+    }
+
     private static void configureClassGeneration(Project project) {
         def task = project.tasks.create(TaskNames.GENERATE_TESTS.taskName, ClassGeneration)
+        task.configure {
+            def list = getJavaFiles()
+            def existing = list.findAll {
+                it.exists()
+            }
+            outputs.upToDateWhen {
+                task.logger.info "Java Files[expected: ${list.size()}, actual: ${existing.size()}]"
+                list.size() == existing.size()
+            }
+        }
         project.tasks.findByPath('compileTestJava').dependsOn task
     }
 }

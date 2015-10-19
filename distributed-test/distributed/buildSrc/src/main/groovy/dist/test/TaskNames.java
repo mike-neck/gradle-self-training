@@ -19,6 +19,7 @@ public enum TaskNames {
 
     GENERATE_TESTS("generateTestSources"),
     COPY_PROJECT_FILES("copyProjectFiles"),
+    CREATE_TEST_RESULTS_DIR("createTestResultsDir"),
     DOCKER_PREPARE("dockerPrepare"),
     DOCKER_COMPOSE("writeDockerCompose"),
     DOCKER_FILE("writeDockerfile"),

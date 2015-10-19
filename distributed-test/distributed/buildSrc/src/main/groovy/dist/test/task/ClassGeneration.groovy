@@ -73,7 +73,7 @@ class ClassGeneration extends DefaultTask {
     }
 
     @OutputFiles
-    FileCollection getJavaFile() {
+    FileCollection getJavaFiles() {
         if (javaFiles == null) {
             setOutFile()
         }
