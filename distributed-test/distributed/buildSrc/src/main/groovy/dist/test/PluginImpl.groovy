@@ -20,6 +20,7 @@ import dist.test.model.Groups
 import dist.test.task.ClassGeneration
 import dist.test.task.DockerCompose
 import dist.test.task.DockerFile
+import dist.test.task.RemoveContainer
 import dist.test.task.RunDockerCompose
 import dist.test.task.RunTestOnDocker
 import dist.test.util.TestTaskCreator
@@ -70,10 +71,17 @@ class PluginImpl implements Plugin<Project> {
             dependsOn TaskNames.DOCKER_BUILD.taskName
         }
 
+        // remove container
+        project.tasks.create(TaskNames.REMOVE_CONTAINER.taskName, RemoveContainer).configure {
+            def containerNames = Groups.values().collect { it.runningName }.join(', ')
+            description = "Remove docker containers created by distributed test[${containerNames}]."
+        }
+
         // run docker
         project.tasks.create(TaskNames.RUN_TEST_ON_DOCKER.taskName, RunTestOnDocker).configure {
             description = 'Run test int parallel with docker containers.'
             dependsOn TaskNames.DOCKER_PREPARE.taskName
+            finalizedBy TaskNames.REMOVE_CONTAINER.taskName
         }
 
         // summarize test results
