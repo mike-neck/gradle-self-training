@@ -21,11 +21,10 @@ public enum TaskNames {
     COPY_PROJECT_FILES("copyProjectFiles"),
     CREATE_TEST_RESULTS_DIR("createTestResultsDir"),
     DOCKER_PREPARE("prepareDocker"),
-    DOCKER_COMPOSE("writeDockerCompose"),
     DOCKER_FILE("writeDockerfile"),
     DOCKER_BUILD("dockerBuild"),
     RUN_TEST_ON_DOCKER("runTestOnDocker"),
-    RUN_DOCKER("runDocker");
+    TEST_REPORT("reportDistributedTest");
 
     private final String taskName;
 

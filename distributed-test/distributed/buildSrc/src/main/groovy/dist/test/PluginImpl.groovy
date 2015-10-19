@@ -28,6 +28,7 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.Exec
+import org.gradle.api.tasks.testing.TestReport
 
 class PluginImpl implements Plugin<Project> {
 
@@ -77,6 +78,14 @@ class PluginImpl implements Plugin<Project> {
         }
 
         // summarize test results
+        project.tasks.create(TaskNames.TEST_REPORT.taskName, TestReport).configure {
+            dependsOn TaskNames.RUN_TEST_ON_DOCKER.taskName
+            testResultDirs = Groups.values().collect {
+                project.file("${TestTaskCreator.baseDirName(project)}/${it.lowerCase}/bin")
+            }
+            destinationDir = project.file("${project.buildDir}/test-report")
+        }
+
         // bundle task graph
     }
 
