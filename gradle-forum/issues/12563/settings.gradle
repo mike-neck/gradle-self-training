@@ -1,0 +1,12 @@
+def map = new File(new File('settings.gradle').canonicalFile.parent).listFiles().findAll {
+    it.isDirectory() && !(it.name in ['.gradle','gradle','build','.git'])
+}.each {
+    include it.name
+}.collectEntries {
+    [it.name, it]
+}
+
+rootProject.name = 'issue'
+rootProject.children.each {
+    it.buildFileName = '../sub.gradle'
+}

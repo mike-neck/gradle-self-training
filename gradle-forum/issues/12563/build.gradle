@@ -1,0 +1,20 @@
+plugins {
+    id 'base'
+}
+
+configurations {
+    fooDep
+    barDep
+}
+
+dependencies {
+    fooDep project(':foo')
+    barDep project(':bar')
+}
+
+task showBuildFile << {
+    println "root -> [${buildFile}]"
+    childProjects.each {
+        println "${it.key} -> [${it.value.buildFile}]"
+    }
+}
