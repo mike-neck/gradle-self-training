@@ -1,0 +1,25 @@
+plugins {
+    id 'java'
+    id 'idea'
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile 'org.slf4j:slf4j-api:1.7.12'
+    testCompile 'junit:junit:4.12'
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'idea'
+    apply from: project.file('build.gradle')
+}
+
+task allDep(dependsOn: [':foo:dependencies', ':bar:dependencies', ':gradle-forum:dependencies'], group: 'help')
+
+wrapper {
+    gradleVersion = 2.5
+}

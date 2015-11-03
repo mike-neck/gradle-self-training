@@ -1,0 +1,2 @@
+include 'foo', 'bar', 'gradle-forum'
+rootProject.name = 'gradle-forum'

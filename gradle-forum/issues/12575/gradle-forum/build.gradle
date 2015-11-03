@@ -1,0 +1,9 @@
+repositories {
+    jcenter()
+}
+
+dependencies {
+    'junit:junit:4.12'
+}
+
+println "${project.name} : dependencies[${dependencies},${dependencies.hashCode()}]"
