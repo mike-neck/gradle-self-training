@@ -1,0 +1,39 @@
+plugins {
+    id 'java'
+    id 'idea'
+}
+
+ext {
+    jdk = '1.8'
+    enc = 'UTF-8'
+    docSrc = 'docSrc'
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile 'org.slf4j:slf4j-api:1.7.12'
+    testCompile 'junit:junit:4.12'
+}
+
+tasks.withType(JavaCompile) {
+    it.sourceCompatibility = jdk
+    it.targetCompatibility = jdk
+    it.options.encoding = enc
+}
+
+task copyJavadocImages(type: Copy) {
+    from fileTree('src/javadoc/java')
+    into tasks.javadoc.destinationDir
+}
+
+tasks.javadoc.finalizedBy tasks.copyJavadocImages
+
+idea {
+    project {
+        jdkName = jdk
+        languageLevel = jdk
+    }
+}
