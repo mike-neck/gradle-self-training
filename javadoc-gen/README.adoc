@@ -1,0 +1,50 @@
+= ディレクトリー構成
+
+.ソースディレクトリーの構成
+[source]
+----
+src
+├── javadoc
+│   └── java
+│       └── foo
+│           ├── cioccolata-secco.jpg
+│           └── secco.jpg
+├── main
+│   └── java
+│       └── foo
+│           ├── AbilityPerson.java
+│           ├── Cioccolata.java
+│           ├── Secco.java
+│           ├── Stand.java
+│           └── doc-files
+└── test
+    └── java
+        └── foo
+----
+
+.ディレクトリー概要
+* `src/main` - プロダクションコード
+* `src/javadoc` - javadoc用のイメージ
+
+= javadocコマンド
+
+本来 `javadoc` コマンドはパッケージの中に `doc-files` ディレクトリーがあれば、それをコピーするらしいのですが、Gradleのjavadocタスクではそれをコピーしてくれないっぽい(オプションに何かあるかもしれないけど、テンパってて調べてない)。
+
+= 実装方針
+
+どのみち、ディレクトリーをわけるということだったので、ことだったので、そのまま `javadoc` タスクの後に、 `src/javadoc/java` ディレクトリーをそのまま `javadoc` タスクの成果物のディレクトリーにコピーすることにした。
+
+= タスク作成例
+
+.タスクは次のような感じで `javadoc` タスクの次に必ず実行されるようにしている
+[source,groovy]
+----
+task copyJavadocImages(type: Copy) {
+    from fileTree('src/javadoc/java')
+    into tasks.javadoc.destinationDir
+}
+
+tasks.javadoc.finalizedBy tasks.copyJavadocImages
+----
+
+テスト用のに共有したい場合は、別途同じようなタスクを作ってください。
