@@ -1,0 +1,53 @@
+plugins {
+    id 'base'
+}
+
+ext {
+    charset = 'UTF-8'
+    groupName = 'sample'
+    helper = 'helper'
+}
+
+task gitRev(type: Exec, group: groupName) {
+    commandLine 'git', 'log', '-1', '--format=%H'
+    standardOutput = new ByteArrayOutputStream()
+    ext.hash = {
+        standardOutput.toString(charset)
+    }
+}
+
+task writeHash(dependsOn: 'gitRev', group: groupName) {
+    def result = file("${buildDir}/hash.txt")
+    outputs.file result
+    doLast {
+        if(!buildDir.exists()) {
+            buildDir.mkdirs()
+        }
+        def hash = tasks.gitRev.hash()
+        println hash
+        result.write(hash, charset)
+    }
+}
+
+task getRev(type: Exec) {
+    commandLine 'git', 'log', '-1', '--format=%H'
+    standardOutput = new ByteArrayOutputStream()
+    ext.output = {
+        return standardOutput.toString(charset)
+    }
+}
+
+task printRev(dependsOn: getRev) {
+    doLast {
+        println tasks.getRev.output()
+    }
+}
+
+task currentRev(type: Exec, group: helper) {
+    commandLine 'git', 'log', '-1', '--format=%H'
+}
+
+task testTaskOutput(type: Exec, group: helper) {
+    commandLine 'git', 'log', '-1', '--format=%H'
+    standardOutput = new ByteArrayOutputStream()
+}
