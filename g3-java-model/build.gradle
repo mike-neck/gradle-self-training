@@ -1,0 +1,37 @@
+plugins {
+    id 'jvm-component'
+    id 'java-lang'
+}
+
+ext {
+    modPrefix = 'com.bsf'
+}
+
+model {
+    components {
+        "${modPrefix}.basic"(JvmLibrarySpec) {
+            targetPlatform 'java6'
+        }
+        "${modPrefix}.functions"(JvmLibrarySpec) {
+            targetPlatform 'java6'
+            sources {
+                java {
+                    dependencies {
+                        library "${modPrefix}.basic"
+                    }
+                }
+            }
+        }
+        "${modPrefix}.data"(JvmLibrarySpec) {
+            targetPlatform 'java6'
+            sources {
+                java {
+                    dependencies {
+                        library "${modPrefix}.basic"
+                        library "${modPrefix}.functions"
+                    }
+                }
+            }
+        }
+    }
+}
