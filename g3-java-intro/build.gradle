@@ -1,0 +1,31 @@
+plugins {
+    id 'jvm-component'
+    id 'java-lang'
+}
+
+model {
+    components {
+        main(JvmLibrarySpec) {
+            sources {
+                java {
+                    dependencies {
+                        library 'res'
+                    }
+                }
+            }
+        }
+        res(JvmLibrarySpec)
+    }
+}
+
+task runApp(type: JavaExec) {
+    def jar = org.gradle.jvm.tasks.Jar
+    tasks.withType(jar) {
+        classpath += it.outputs.files
+    }
+    main = 'sample.Main'
+    doLast {
+        println "old Jar task type : ${Jar.canonicalName}"
+        println "new Jar task type : ${jar.canonicalName}"
+    }
+}
