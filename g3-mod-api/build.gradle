@@ -1,0 +1,47 @@
+plugins {
+    id 'jvm-component'
+    id 'java-lang'
+}
+
+model {
+    components {
+        exceptions(JvmLibrarySpec) {
+            targetPlatform 'java6'
+        }
+        functions(JvmLibrarySpec) {
+            targetPlatform 'java8'
+            api {
+                exports 'com.sample.func'
+                dependencies {
+                    library 'exceptions'
+                }
+            }
+        }
+        data(JvmLibrarySpec) {
+            targetPlatform 'java8'
+            api {
+                exports 'com.sample.data.api'
+                dependencies {
+                    library 'functions'
+                }
+            }
+        }
+        "data.test"(JvmLibrarySpec) {
+            targetPlatform 'java8'
+            sources {
+                java {
+                    dependencies {
+                        library 'data'
+                    }
+                }
+            }
+        }
+    }
+    tasks {
+        create('showComponentsName') {
+            doLast {
+                println $.components.keySet().collect{it}.join(', ')
+            }
+        }
+    }
+}
