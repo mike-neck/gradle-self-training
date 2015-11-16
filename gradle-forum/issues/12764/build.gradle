@@ -1,0 +1,43 @@
+plugins {
+    id 'java'
+    id 'idea'
+}
+
+ext {
+    jdkLevel = '1.8'
+    jdk = '8'
+    encoding = 'UTF-8'
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    testCompile 'junit:junit:4.12'
+}
+
+tasks.withType(JavaCompile) {
+    targetCompatibility = jdkLevel
+    sourceCompatibility = jdkLevel
+    options.encoding = encoding
+}
+
+javadoc {
+    classpath += sourceSets.test.compileClasspath
+    source += sourceSets.test.allJava
+}
+
+task testJavadoc(type: Javadoc) {
+    source = sourceSets.test.allJava
+    classpath = sourceSets.test.compileClasspath
+    destinationDir = file("${buildDir}/docs/testjavadoc")
+    println (title == null? '<null>' : title)
+}
+
+idea {
+    project {
+        jdkName = jdkLevel
+        languageLevel = jdkLevel
+    }
+}
