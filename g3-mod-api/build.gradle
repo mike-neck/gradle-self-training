@@ -11,7 +11,7 @@ model {
         functions(JvmLibrarySpec) {
             targetPlatform 'java8'
             api {
-                exports 'com.sample.func'
+                exports 'com.sample.func.api'
                 dependencies {
                     library 'exceptions'
                 }
