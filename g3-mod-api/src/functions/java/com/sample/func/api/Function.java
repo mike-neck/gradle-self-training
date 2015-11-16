@@ -26,6 +26,11 @@ public interface Function<I, O> extends FunctionBase<I, O> {
 
     O apply(I input) throws ExecutionException;
 
+    default <A> Function<I, A> and(Function<? super O, ? extends A> fun) throws EvaluationException {
+        shouldBeNotNull(fun);
+        return i -> fun.apply(apply(i));
+    }
+
     static <IN, OUT> Function<IN, OUT> function(final ExFunction<? super IN, ? extends OUT> exf) throws EvaluationException {
         shouldBeNotNull(exf);
         return i -> {
