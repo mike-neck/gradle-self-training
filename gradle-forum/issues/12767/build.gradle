@@ -1,0 +1,10 @@
+apply plugin: 'base'
+apply plugin: 'idea'
+apply plugin: 'my-scaffold'
+
+idea {
+    project {
+        jdkName='1.8'
+        languageLevel='8'
+    }
+}
