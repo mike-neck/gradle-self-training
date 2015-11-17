@@ -15,10 +15,8 @@
  */
 package com.sample.func.api;
 
-import com.sample.func.internal.OperationBase;
-
 @FunctionalInterface
-public interface ExOperation<O> extends OperationBase<O> {
+public interface ExOperation<O> {
 
     void execute(O obj) throws Exception;
 }

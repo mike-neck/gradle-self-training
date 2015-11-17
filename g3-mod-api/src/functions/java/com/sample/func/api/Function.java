@@ -17,12 +17,11 @@ package com.sample.func.api;
 
 import com.sample.EvaluationException;
 import com.sample.ExecutionException;
-import com.sample.func.internal.FunctionBase;
 
 import static com.sample.func.api.Verifications.shouldBeNotNull;
 
 @FunctionalInterface
-public interface Function<I, O> extends FunctionBase<I, O> {
+public interface Function<I, O> {
 
     O apply(I input) throws ExecutionException;
 

@@ -15,10 +15,8 @@
  */
 package com.sample.func.api;
 
-import com.sample.func.internal.FunctionBase;
-
 @FunctionalInterface
-public interface ExFunction<I, O> extends FunctionBase<I, O> {
+public interface ExFunction<I, O> {
 
     O apply(I input) throws Exception;
 }

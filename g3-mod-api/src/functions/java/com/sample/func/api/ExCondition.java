@@ -15,10 +15,8 @@
  */
 package com.sample.func.api;
 
-import com.sample.func.internal.ConditionBase;
-
 @FunctionalInterface
-public interface ExCondition<S> extends ConditionBase<S> {
+public interface ExCondition<S> {
 
     boolean test(S sbj) throws Exception;
 }

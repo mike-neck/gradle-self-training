@@ -17,12 +17,11 @@ package com.sample.func.api;
 
 import com.sample.EvaluationException;
 import com.sample.ExecutionException;
-import com.sample.func.internal.ConditionBase;
 
 import static com.sample.func.api.Verifications.shouldBeNotNull;
 
 @FunctionalInterface
-public interface Condition<S> extends ConditionBase<S> {
+public interface Condition<S> {
 
     boolean test(S sbj) throws ExecutionException;
 

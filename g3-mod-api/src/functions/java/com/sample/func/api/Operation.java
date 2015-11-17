@@ -17,12 +17,11 @@ package com.sample.func.api;
 
 import com.sample.EvaluationException;
 import com.sample.ExecutionException;
-import com.sample.func.internal.OperationBase;
 
 import static com.sample.func.api.Verifications.shouldBeNotNull;
 
 @FunctionalInterface
-public interface Operation<O> extends OperationBase<O> {
+public interface Operation<O> {
 
     void execute(O obj) throws ExecutionException;
 
