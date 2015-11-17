@@ -18,6 +18,7 @@ package com.sample.func.api;
 import com.sample.EvaluationException;
 import com.sample.func.internal.ConditionBase;
 import com.sample.func.internal.FunctionBase;
+import com.sample.func.internal.OperationBase;
 
 import static com.sample.func.internal.Operation.unsupported;
 
@@ -33,5 +34,9 @@ public final class Verifications {
 
     public static void shouldBeNotNull(ConditionBase<?> cond) throws EvaluationException {
         if (cond == null) throw new EvaluationException(Condition.class);
+    }
+
+    public static void shouldBeNotNull(OperationBase<?> op) throws EvaluationException {
+        if (op == null) throw new EvaluationException(Operation.class);
     }
 }

@@ -54,4 +54,16 @@ public final class Synthesis {
             return result;
         };
     }
+
+    @SafeVarargs
+    public static <O> Operation<O> all(Operation<? super O> head, Operation<? super O>... tail) throws EvaluationException {
+        shouldBeNotNull(head);
+        Iterator<Operation<? super O>> iterator = Arrays.asList(tail).iterator();
+        return obj -> {
+            head.execute(obj);
+            while (iterator.hasNext()) {
+                iterator.next().execute(obj);
+            }
+        };
+    }
 }
