@@ -16,9 +16,6 @@
 package com.sample.func.api;
 
 import com.sample.EvaluationException;
-import com.sample.func.internal.ConditionBase;
-import com.sample.func.internal.FunctionBase;
-import com.sample.func.internal.OperationBase;
 
 import static com.sample.func.internal.Operation.unsupported;
 
@@ -28,15 +25,27 @@ public final class Verifications {
         unsupported(Verifications.class);
     }
 
-    public static void shouldBeNotNull(FunctionBase<?, ?> fun) throws EvaluationException {
+    public static void shouldBeNotNull(Function<?, ?> fun) throws EvaluationException {
         if(fun == null) throw new EvaluationException(Function.class);
     }
 
-    public static void shouldBeNotNull(ConditionBase<?> cond) throws EvaluationException {
+    public static void shouldBeNotNull(ExFunction<?, ?> fun) throws EvaluationException {
+        if(fun == null) throw new EvaluationException(Function.class);
+    }
+
+    public static void shouldBeNotNull(Condition<?> cond) throws EvaluationException {
         if (cond == null) throw new EvaluationException(Condition.class);
     }
 
-    public static void shouldBeNotNull(OperationBase<?> op) throws EvaluationException {
+    public static void shouldBeNotNull(ExCondition<?> cond) throws EvaluationException {
+        if (cond == null) throw new EvaluationException(Condition.class);
+    }
+
+    public static void shouldBeNotNull(Operation<?> op) throws EvaluationException {
+        if (op == null) throw new EvaluationException(Operation.class);
+    }
+
+    public static void shouldBeNotNull(ExOperation<?> op) throws EvaluationException {
         if (op == null) throw new EvaluationException(Operation.class);
     }
 
