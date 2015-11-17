@@ -1,0 +1,19 @@
+apply plugin: 'java'
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile gradleApi()
+    testCompile 'junit:junit:4.12'
+}
+
+task zipScaffold(type: Zip) {
+    from fileTree("${projectDir}/src/main/resources/scaffold")
+    archiveName = 'scaffold.zip'
+    destinationDir = file("${projectDir}/src/main/resources")
+    doLast {
+        println archivePath
+    }
+}
