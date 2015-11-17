@@ -39,4 +39,8 @@ public final class Verifications {
     public static void shouldBeNotNull(OperationBase<?> op) throws EvaluationException {
         if (op == null) throw new EvaluationException(Operation.class);
     }
+
+    public static void objectShouldBeNotNull(Object object) throws EvaluationException {
+        if (object == null) throw new EvaluationException(Object.class);
+    }
 }
