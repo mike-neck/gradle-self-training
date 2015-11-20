@@ -16,7 +16,6 @@
 package test;
 
 import test.exec.ExecutionManager;
-import test.exec.TestExecutor;
 
 import java.util.Set;
 import java.util.stream.Stream;
@@ -37,10 +36,10 @@ public class TestSuite {
                 .filter(t -> t != null)
                 .collect(toSet());
         TestSuite suite = new TestSuite(set);
+        suite.executeTests();
     }
 
     private void executeTests() {
-        // TODO change entry point to ExecutionManager
         ExecutionManager manager = new ExecutionManager(testClasses);
         manager.execute();
     }

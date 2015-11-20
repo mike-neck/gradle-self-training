@@ -61,6 +61,10 @@ public class Statistics {
         return error;
     }
 
+    public boolean isTestSuccess() {
+        return total == success;
+    }
+
     public static Function<List<TestResults>, Statistics> GET_STATISTICS = l -> l.stream()
             .map(TestResults::getResults)
             .map(Map::values)
