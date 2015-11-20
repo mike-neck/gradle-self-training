@@ -50,11 +50,11 @@ public class ExecutionManager {
 
     private final long started;
 
-    private final Set<Class<Test>> tests;
+    private final Set<Class<? extends Test>> tests;
 
     private final Queue<TestResults> queue;
 
-    public ExecutionManager(Set<Class<Test>> tests) {
+    public ExecutionManager(Set<Class<? extends Test>> tests) {
         this.tests = tests;
         this.queue = new ConcurrentLinkedQueue<>();
         this.started = System.nanoTime();

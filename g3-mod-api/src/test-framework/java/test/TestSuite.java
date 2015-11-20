@@ -24,15 +24,15 @@ import static java.util.stream.Collectors.toSet;
 
 public class TestSuite {
 
-    private final Set<Class<Test>> testClasses;
+    private final Set<Class<? extends Test>> testClasses;
 
-    private TestSuite(Set<Class<Test>> testClasses) {
+    private TestSuite(Set<Class<? extends Test>> testClasses) {
         if (testClasses == null || testClasses.size() == 0) throw new IllegalArgumentException("Test classes is null or empty.");
         this.testClasses = testClasses;
     }
 
-    public static void run(Class<Test>... testClasses) {
-        Set<Class<Test>> set = Stream.of(testClasses)
+    public static void run(Class<? extends Test>... testClasses) {
+        Set<Class<? extends Test>> set = Stream.of(testClasses)
                 .filter(t -> t != null)
                 .collect(toSet());
         TestSuite suite = new TestSuite(set);
