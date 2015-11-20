@@ -35,12 +35,12 @@ public class Panic<T extends Test> implements Result<T> {
 
     @Override
     public Class<T> getTestClass() {
-        return null;
+        return testClass;
     }
 
     @Override
     public String getTestName() {
-        return null;
+        return testName.getName();
     }
 
     public String getCause() {
