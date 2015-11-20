@@ -52,7 +52,7 @@ public abstract class MaybeBase<V> implements Maybe<V> {
     @Override
     public V or(V defaultValue) throws EvaluationException {
         objectShouldBeNotNull(defaultValue);
-        return null;
+        return orInternal(defaultValue);
     }
 
     abstract protected V orInternal(V defaultValue);
