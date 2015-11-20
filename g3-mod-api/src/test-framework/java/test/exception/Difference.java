@@ -38,9 +38,17 @@ public class Difference<T> {
     public String getDiff() {
         String nl = System.lineSeparator();
         String idt = "  ";
-        return new StringBuilder(INDEX).append("Test failed:").append(nl)
-                .append(INDEX).append(idt).append("expected : <").append(expected.getClass().getSimpleName()).append("> ").append(expected.toString()).append(nl)
-                .append(INDEX).append(idt).append("actual   : <").append(actual.getClass()).append("> ").append(actual.toString()).append(nl)
-                .toString();
+        StringBuilder sb = new StringBuilder(INDEX).append("Test failed:").append(nl);
+        if (expected == null) {
+            sb.append(INDEX).append(idt).append("expected : <null> null").append(nl);
+        } else {
+            sb.append(INDEX).append(idt).append("expected : <").append(expected.getClass().getSimpleName()).append("> ").append(expected.toString()).append(nl);
+        }
+        if (actual == null) {
+            sb.append(INDEX).append(idt).append("actual   : <null> null").append(nl);
+        } else {
+            sb.append(INDEX).append(idt).append("actual   : <").append(actual.getClass()).append("> ").append(actual.toString()).append(nl);
+        }
+        return sb.toString();
     }
 }
