@@ -31,6 +31,7 @@ public class TestSuite {
         this.testClasses = testClasses;
     }
 
+    @SafeVarargs
     public static void run(Class<? extends Test>... testClasses) {
         Set<Class<? extends Test>> set = Stream.of(testClasses)
                 .filter(t -> t != null)
