@@ -43,12 +43,12 @@ public interface Maybe<V> {
 
     V or(V defaultValue) throws EvaluationException;
 
-    static <V> Some<V> some(V value) throws EvaluationException {
+    static <V> Maybe<V> some(V value) throws EvaluationException {
         objectShouldBeNotNull(value);
         return new Some<>(value);
     }
 
-    static <V> Nothing<V> nothing() {
+    static <V> Maybe<V> nothing() {
         return new Nothing<>();
     }
 }
