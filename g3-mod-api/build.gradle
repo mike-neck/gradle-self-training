@@ -32,9 +32,13 @@ model {
                 java {
                     dependencies {
                         library 'data'
+                        library 'test-framework'
                     }
                 }
             }
+        }
+        'test-framework'(JvmLibrarySpec) {
+            targetPlatform 'java8'
         }
     }
     tasks {
