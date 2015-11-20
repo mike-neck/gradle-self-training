@@ -20,6 +20,7 @@ import test.result.Accident;
 import test.result.Failure;
 import test.result.Panic;
 import test.result.Result;
+import test.result.Success;
 
 import java.util.List;
 import java.util.function.Function;
@@ -123,10 +124,14 @@ public class ResultPrinter implements UnaryOperator<List<TestResults>> {
 
         void print() {
             String nameLine = "    - " + testName;
-            // Failureの場合
-            //     - テスト名(赤)
-            // diff(赤)
-            if (result instanceof Failure) {
+            // Successの場合
+            //     - テスト名(緑)
+            if (result instanceof Success) {
+                greenln(nameLine);
+                // Failureの場合
+                //     - テスト名(赤)
+                // diff(赤)
+            } else if (result instanceof Failure) {
                 redln(nameLine);
                 normalln(((Failure) result).getDiff());
             // Accidentの場合
