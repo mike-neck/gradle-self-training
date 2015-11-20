@@ -44,6 +44,14 @@ public abstract class Test {
         }
     }
 
+    protected <T> Actual<T> setup(Supplier<T> input) {
+        return new Actual<>(input);
+    }
+
+    protected <T> Actual<T> setup(ExSupplier<T> input) {
+        return new Actual<>(input);
+    }
+
     public static class Actual<T> {
         private final Step<T> step;
 
@@ -89,7 +97,7 @@ public abstract class Test {
             return new Actual<>(step.count + 1, mutate);
         }
 
-        public Asserting<T> when() {
+        public Asserting<T> then() {
             Supplier<T> actual = () -> {
                 try {
                     return step.get();
