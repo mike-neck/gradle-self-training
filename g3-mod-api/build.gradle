@@ -49,3 +49,10 @@ model {
         }
     }
 }
+
+task dataTestExec(type: JavaExec, dependsOn: 'assemble') {
+    classpath = files(tasks.assemble.dependsOn.findAll {it instanceof BaseBinarySpec}.collect {
+        [it.jarFile, it.apiJarFile]
+    }.flatten().collect {it.absolutePath})
+    main = 'com.sample.Main'
+}
