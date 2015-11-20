@@ -38,11 +38,11 @@ public class TestExecutor {
 
     private final ExecutorService exec;
 
-    private final Set<Class<Test>> tests;
+    private final Set<Class<? extends Test>> tests;
 
     private final Queue<TestResults> queue;
 
-    public TestExecutor(ExecutorService exec, Set<Class<Test>> tests, Queue<TestResults> queue) {
+    public TestExecutor(ExecutorService exec, Set<Class<? extends Test>> tests, Queue<TestResults> queue) {
         this.exec = exec;
         this.tests = tests;
         this.queue = queue;
@@ -51,20 +51,20 @@ public class TestExecutor {
     public CompletableFuture<Void> run() {
         return tests.stream()
                 .map(createCases)
-                .map(runners(queue))
+                .<Runnable>map(runners(queue))
                 .map(r -> CompletableFuture.runAsync(r, exec))
                 .collect(new FutureCollector(tests.size()));
     }
 
-    private static final Function<Class<Test>, TestCases<Test>> createCases = c -> {
+    private static final Function<Class<? extends Test>, TestCases<? extends Test>> createCases = c -> {
         Set<Method> methods = Stream.of(c.getDeclaredMethods())
                 .filter(m -> m.getAnnotation(Execute.class) != null)
                 .collect(toSet());
         return new TestCases<>(c, methods);
     };
 
-    private static Function<TestCases<? super Test>, Runnable> runners(Queue<TestResults> q) {
-        return tc -> () -> q.offer(tc.invoke());
+    private static Function<TestCases<? extends Test>, Runnable> runners(Queue<TestResults> q) {
+        return tc -> (Runnable) () -> q.offer(tc.invoke());
     }
 
     private static class Future extends CompletableFuture<Void> {}

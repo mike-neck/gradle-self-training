@@ -48,7 +48,7 @@ public abstract class Test {
         return new Actual<>(input);
     }
 
-    protected <T> Actual<T> setup(ExSupplier<T> input) {
+    protected <T> Actual<T> setupWithException(ExSupplier<T> input) {
         return new Actual<>(input);
     }
 
