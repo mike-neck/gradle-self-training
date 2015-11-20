@@ -20,6 +20,7 @@ import test.Test;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Queue;
@@ -62,7 +63,7 @@ public class TestExecutor {
     }
 
     private static final Function<Class<? extends Test>, TestCases<? extends Test>> createCases = c -> {
-        Set<Method> methods = Stream.of(c.getDeclaredMethods())
+        Set<Method> methods = Arrays.stream(c.getDeclaredMethods())
                 .filter(m -> m.getAnnotation(Execute.class) != null)
                 .collect(toSet());
         return new TestCases<>(c, methods);
