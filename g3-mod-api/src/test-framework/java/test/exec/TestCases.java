@@ -21,8 +21,8 @@ import java.util.function.BinaryOperator;
 import java.util.function.Function;
 
 import test.Test;
-import test.Test.TestExecutionException;
-import test.Test.TestFailureException;
+import test.exception.TestExecutionException;
+import test.exception.TestFailureException;
 import test.result.Accident;
 import test.result.Failure;
 import test.result.Panic;
@@ -56,7 +56,18 @@ public class TestCases<T extends Test> {
             } catch (TestFailureException e) {
                 return new Failure<>(testClass, m, e.getMessage());
             } catch (IllegalAccessException | InvocationTargetException e) {
-                return new Panic<>(testClass, m, e);
+                Throwable cause = e.getCause();
+                if (cause == null) {
+                    return new Panic<>(testClass, m, e);
+                } else if (cause instanceof TestExecutionException) {
+                    TestExecutionException t = (TestExecutionException) cause;
+                    return new Accident<>(testClass, m, t.getExplanation());
+                } else if (cause instanceof TestFailureException) {
+                    TestFailureException t = (TestFailureException) cause;
+                    return new Failure<>(testClass, m, t.getMessage());
+                } else {
+                    return new Panic<>(testClass, m, e);
+                }
             }
         };
     }

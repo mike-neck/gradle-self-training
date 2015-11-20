@@ -100,6 +100,7 @@ public class ExecutionManager {
         green(success);
         red(failure);
         yellowln(error);
+        normalln("");
 
         boolean state = s.isTestSuccess();
         String result = state ? "TEST SUCCEEDED" : "TEST FAILED";
@@ -108,5 +109,6 @@ public class ExecutionManager {
         } else {
             redln(result);
         }
+        normalln("");
     };
 }
