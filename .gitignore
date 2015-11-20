@@ -1,8 +1,8 @@
 .gradle/
-!gradle/wrapper/*.jar
 build/
 
 *.jar
+!*/gradle/wrapper/*.jar
 *.class
 
 *.iml
