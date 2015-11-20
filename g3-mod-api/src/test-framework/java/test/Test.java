@@ -15,6 +15,10 @@
  */
 package test;
 
+import test.exception.Difference;
+import test.exception.TestExecutionException;
+import test.exception.TestFailureException;
+
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -122,65 +126,4 @@ public abstract class Test {
         }
     }
 
-    public static class TestExecutionException extends RuntimeException {
-
-        private final int step;
-        private final String msg;
-        private final Throwable cas;
-
-        public TestExecutionException(int step, String message, Throwable cas) {
-            super(message, cas);
-            this.step = step;
-            this.msg = message;
-            this.cas = cas;
-        }
-
-        public String getExplanation() {
-            return new StringBuilder("step[").append(step).append("] : ")
-                    .append(msg).append(" : ").append(System.lineSeparator())
-                    .append(cas.getClass().getCanonicalName()).append("[").append(cas.getMessage()).append("]")
-                    .toString();
-        }
-    }
-
-    private static class Difference<T> {
-        private final T actual;
-        private final T expected;
-
-        private Difference(T actual, T expected) {
-            this.actual = actual;
-            this.expected = expected;
-        }
-
-        void compareValue() throws TestFailureException {
-            if (expected != null && !expected.equals(actual)) {
-                throw new TestFailureException(this);
-            } else if (expected == null && actual != null) {
-                throw new TestFailureException(this);
-            }
-        }
-
-        private String getDiff() {
-            String nl = System.lineSeparator();
-            String idt = "  ";
-            return new StringBuilder("Test failed:").append(nl)
-                    .append(idt).append("expected : <").append(expected.getClass().getSimpleName()).append("> ").append(expected.toString()).append(nl)
-                    .append(idt).append("actual   : <").append(actual.getClass()).append("> ").append(actual.toString()).append(nl)
-                    .toString();
-        }
-    }
-
-    public static class TestFailureException extends RuntimeException {
-
-        private final Difference<?> diff;
-
-        private TestFailureException(Difference<?> difference) {
-            this.diff = difference;
-        }
-
-        @Override
-        public String getMessage() {
-            return diff.getDiff();
-        }
-    }
 }

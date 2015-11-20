@@ -38,6 +38,7 @@ public class ResultPrinter implements UnaryOperator<List<TestResults>> {
         list.stream()
                 .map(TO_PRINTER)
                 .forEach(Printer::print);
+        normalln("");
         return list;
     }
 

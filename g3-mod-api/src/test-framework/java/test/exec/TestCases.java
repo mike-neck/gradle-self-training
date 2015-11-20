@@ -21,8 +21,8 @@ import java.util.function.BinaryOperator;
 import java.util.function.Function;
 
 import test.Test;
-import test.Test.TestExecutionException;
-import test.Test.TestFailureException;
+import test.exception.TestExecutionException;
+import test.exception.TestFailureException;
 import test.result.Accident;
 import test.result.Failure;
 import test.result.Panic;
