@@ -19,19 +19,24 @@ import test.Execute;
 import test.Test;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
+import java.util.function.IntFunction;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
 public class TestExecutor {
@@ -49,11 +54,11 @@ public class TestExecutor {
     }
 
     public CompletableFuture<Void> run() {
-        return tests.stream()
+        return CompletableFuture.allOf(tests.stream()
                 .map(createCases)
                 .<Runnable>map(runners(queue))
                 .map(r -> CompletableFuture.runAsync(r, exec))
-                .collect(new FutureCollector(tests.size()));
+                .collect(toList()).toArray(new CompletableFuture<?>[tests.size()]));
     }
 
     private static final Function<Class<? extends Test>, TestCases<? extends Test>> createCases = c -> {
@@ -65,48 +70,5 @@ public class TestExecutor {
 
     private static Function<TestCases<? extends Test>, Runnable> runners(Queue<TestResults> q) {
         return tc -> (Runnable) () -> q.offer(tc.invoke());
-    }
-
-    private static class Future extends CompletableFuture<Void> {}
-
-    private class FutureCollector implements Collector<CompletableFuture<Void>, CompletableFuture<Void>[], CompletableFuture<Void>> {
-
-        private final int size;
-
-        private final AtomicInteger pos = new AtomicInteger(0);
-
-        private FutureCollector(int size) {
-            this.size = size;
-        }
-
-        @Override
-        public Supplier<CompletableFuture<Void>[]> supplier() {
-            return () -> new Future[size];
-        }
-
-        @Override
-        public BiConsumer<CompletableFuture<Void>[], CompletableFuture<Void>> accumulator() {
-            return (a, f) -> a[pos.getAndIncrement()] = f;
-        }
-
-        @Override
-        public BinaryOperator<CompletableFuture<Void>[]> combiner() {
-            return (l, r) -> {
-                CompletableFuture<Void>[] array = new Future[size];
-                System.arraycopy(l, 0, array, 0, l.length);
-                System.arraycopy(r, 0, array, l.length, r.length);
-                return array;
-            };
-        }
-
-        @Override
-        public Function<CompletableFuture<Void>[], CompletableFuture<Void>> finisher() {
-            return CompletableFuture::allOf;
-        }
-
-        @Override
-        public Set<Characteristics> characteristics() {
-            return Collections.emptySet();
-        }
     }
 }
