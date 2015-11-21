@@ -101,10 +101,13 @@ public abstract class Test {
             return new Actual<>(step.count + 1, mutate);
         }
 
-        public Asserting<T> then() {
-            Supplier<T> actual = () -> {
+        public <R> Asserting<R> then(Function<? super T, ? extends R> mapper) throws IllegalArgumentException {
+            if (mapper == null) {
+                throw new IllegalArgumentException("Asserting operation is required at then method.");
+            }
+            Supplier<R> actual = () -> {
                 try {
-                    return step.get();
+                    return mapper.apply(step.get());
                 } catch (Throwable e) {
                     throw new TestExecutionException(step.count, "assertion", e);
                 }
