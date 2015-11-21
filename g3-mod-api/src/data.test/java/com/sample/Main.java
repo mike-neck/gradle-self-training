@@ -16,11 +16,12 @@
 package com.sample;
 
 import com.sample.tests.NothingTest;
+import com.sample.tests.SomeTest;
 import test.TestSuite;
 
 public class Main {
 
     public static void main(String[] args) {
-        TestSuite.run(NothingTest.class);
+        TestSuite.run(NothingTest.class, SomeTest.class);
     }
 }
