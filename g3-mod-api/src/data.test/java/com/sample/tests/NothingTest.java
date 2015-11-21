@@ -19,13 +19,68 @@ import com.sample.data.api.Maybe;
 import test.Execute;
 import test.Test;
 
+import java.util.NoSuchElementException;
+
 public class NothingTest extends Test {
 
     @Execute
     public void nothingIsNothingReturnsTrue() {
         setup(Maybe::nothing)
-                .when(Maybe::isNothing)
-                .then()
+                .then(Maybe::isNothing)
                 .equalsTo(true);
     }
+
+    @Execute
+    public void nothingIsSomeReturnsFalse() {
+        setup(Maybe::nothing)
+                .then(Maybe::isSome)
+                .equalsTo(false);
+    }
+
+    @Execute
+    public void nothingOfStringMapWithLengthMethodRemainsNothing() {
+        setup(() -> Maybe.<String>nothing())
+                .when(m -> m.map(String::length))
+                .then(Maybe::isNothing)
+                .equalsTo(true);
+    }
+
+    @Execute
+    public void nothingOfStringFilteredByContentsRemainsNothing() {
+        setup(() -> Maybe.<String>nothing())
+                .when(m -> m.filter(s -> s.contains("test")))
+                .then(Maybe::isNothing)
+                .equalsTo(true);
+    }
+
+    @Execute
+    public void nothingOfStringFmapedRemainsNothing() {
+        setup(() -> Maybe.<String>nothing())
+                .when(m -> m.fmap(s -> s.length() < 5 ? Maybe.nothing() : Maybe.some(s)))
+                .then(Maybe::isNothing)
+                .equalsTo(true);
+    }
+
+    @Execute
+    public void nothingOrReturnsDefaultValue() {
+        setup(() -> Maybe.<String>nothing())
+                .then(m -> m.or("default value"))
+                .equalsTo("default value");
+    }
+
+    @Execute
+    public void nothingGetThrowsException() {
+        setup(() -> Maybe.<String>nothing())
+                .when(m -> {
+                    try {
+                        m.get();
+                        return new SomethingWrong();
+                    } catch (NoSuchElementException e) {
+                        return e;
+                    }
+                }).then(e -> e instanceof NoSuchElementException)
+                .equalsTo(true);
+    }
+
+    private static class SomethingWrong extends Exception {}
 }
