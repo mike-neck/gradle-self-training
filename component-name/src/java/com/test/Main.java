@@ -31,7 +31,7 @@ public class Main implements Runnable {
 
     @Override
     public void run() {
-        try(Stream st = new BufferedReader(new InputStreamReader(loader.getResourceAsStream("test.txt"))).lines()) {
+        try(Stream<String> st = new BufferedReader(new InputStreamReader(loader.getResourceAsStream("test.txt"))).lines()) {
             st.forEach(System.out::println);
         }
     }
