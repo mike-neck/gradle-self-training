@@ -7,5 +7,6 @@ model {
     components {
         '.'(JvmLibrarySpec)
         '..'(JvmLibrarySpec)
+        '../src'(JvmLibrarySpec)
     }
 }
