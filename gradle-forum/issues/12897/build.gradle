@@ -1,0 +1,39 @@
+plugins {
+    id 'base'
+}
+
+task showSystem {
+    onlyIf {
+        System.env['HOME'] != null
+    }
+    doLast {
+        System.env.each {
+            println "${it.key} -> ${it.value}"
+        }
+    }
+}
+
+task printSys {
+    doLast {
+        println "$System.env.HOME/.gradle"
+    }
+}
+
+task outHome {
+    def outFile = "${buildDir}/home.txt"
+    outputs.file outFile
+    doLast {
+        if(!buildDir.exists()) {
+            buildDir.mkdirs()
+        }
+        file(outFile).write(System.env.HOME, 'UTF-8')
+    }
+}
+
+task copyHome(type:Copy) {
+    from tasks.outHome.outputs
+    into "${buildDir}/home/"
+    onlyIf {
+        System.env['HOME'] != null
+    }
+}
