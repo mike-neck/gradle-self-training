@@ -3,11 +3,15 @@ plugins {
     id 'java-lang'
 }
 
+version = '0.1'
+
 ext {
     helpGroup = 'JVM Components Help Type'
     jigsawBuild = 'Jigsaw Build'
     jigsaw = 'jigsaw'
     copySrcTask = 'copyAsJigsawStructure'
+    compileJigsaw = 'compileJigsaw'
+    jdkBin = "${projectDir}/jdk1.9.0.jdk/Contents/Home/bin"
 }
 
 model {
@@ -87,14 +91,14 @@ model {
                 dependsOn "${lib.name}Copy"
             }
         }
-        create('compileJigsaw', Exec) {
+        create(compileJigsaw, Exec) {
             dependsOn copySrcTask
             group = jigsawBuild
 
             def destDir = file("${buildDir}/${jigsaw}/tmp")
             outputs.dir destDir
 
-            def javac = "${projectDir}/jdk1.9.0.jdk/Contents/Home/bin/javac"
+            def javac = "${jdkBin}/javac"
 
             workingDir "${buildDir}/${jigsaw}"
 
@@ -115,6 +119,39 @@ model {
                     destDir.mkdirs()
                 }
                 println commands
+            }
+        }
+        $.components.each {lib ->
+            create("${lib.name}Packaging", Exec) {
+                dependsOn compileJigsaw
+                workingDir "${buildDir}/${jigsaw}"
+                def dest = project.file("${buildDir}/${jigsaw}/libs")
+                outputs.dir dest
+
+                def jarCmd = "${jdkBin}/jar"
+                def create = '--create'
+                def nameOption = "--file=libs/${lib.name}-${project.version}.jar"
+                def classesDir = "tmp/${lib.name}"
+
+                if (lib.name == 'data.test') {
+                    commandLine jarCmd, create, nameOption, '--main-class=com.sample.Main', '-C', classesDir
+                } else {
+                    commandLine jarCmd, create, nameOption, '--module-version', "${project.version}", '-C', classesDir
+                }
+
+
+                doFirst {
+                    if (!dest.exists()) {
+                        dest.mkdirs()
+                    }
+                }
+            }
+        }
+
+        create('packageJigsaw') {
+            group = jigsawBuild
+            $.components.each {lib ->
+                dependsOn "${lib.name}Packaging"
             }
         }
     }
