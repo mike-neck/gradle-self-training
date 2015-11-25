@@ -3,6 +3,17 @@ plugins {
     id 'java-lang'
 }
 
+version = '0.1'
+
+ext {
+    helpGroup = 'JVM Components Help Type'
+    jigsawBuild = 'Jigsaw Build'
+    jigsaw = 'jigsaw'
+    copySrcTask = 'copyAsJigsawStructure'
+    compileJigsaw = 'compileJigsaw'
+    jdkBin = "${projectDir}/jdk1.9.0.jdk/Contents/Home/bin"
+}
+
 model {
     components {
         exceptions(JvmLibrarySpec) {
@@ -37,22 +48,123 @@ model {
                 }
             }
         }
-        'test-framework'(JvmLibrarySpec) {
+        'test.framework'(JvmLibrarySpec) {
             targetPlatform 'java8'
         }
     }
     tasks {
-        create('showComponentsName') {
+        create('showLibraryName') {
+            group = helpGroup
             doLast {
-                println $.components.keySet().collect{it}.join(', ')
+                println $.components.keySet().collect{it}.join('\n')
+            }
+        }
+        create('collectComponentNames') {
+            doLast {
+                extensions.add('componentNames', $.components.keySet())
+            }
+        }
+        create('typeOfComponents') {
+            group = helpGroup
+            def cmp = $.components
+            doLast {
+                println "type of components -> [${cmp.getClass()}]"
+                cmp.each {
+                    println "  ${it.name}"
+                    it.sources.each {
+                        println "    ${it.name} -> ${it.source.srcDirs}"
+                    }
+                }
+            }
+        }
+        $.components.each {lib ->
+            create("${lib.name}Copy", Copy) {
+                into "${buildDir}/${jigsaw}/src/${lib.name}"
+                lib.sources.java.source.srcDirs.each {
+                    from fileTree(it)
+                }
+            }
+        }
+        create(copySrcTask) {
+            group = jigsawBuild
+            $.components.each {lib ->
+                dependsOn "${lib.name}Copy"
+            }
+        }
+        create(compileJigsaw, Exec) {
+            dependsOn copySrcTask
+            group = jigsawBuild
+
+            def destDir = file("${buildDir}/${jigsaw}/tmp")
+            outputs.dir destDir
+
+            def javac = "${jdkBin}/javac"
+
+            workingDir "${buildDir}/${jigsaw}"
+
+            def commands = [javac,'-d', 'tmp', '-modulesourcepath', 'src']
+
+            commands += $.components.collect {lib ->
+                lib.sources.java.source.srcDirs.collect {
+                    project.fileTree(it).files
+                }
+            }.flatten().collect {
+                it.absolutePath.replace("${projectDir}/", '').replace('/java/', '/')
+            }
+
+            commandLine commands
+
+            doFirst {
+                if (!destDir.exists()) {
+                    destDir.mkdirs()
+                }
+                println commands
+            }
+        }
+        $.components.each {lib ->
+            create("${lib.name}Packaging", Exec) {
+                dependsOn compileJigsaw
+                workingDir "${buildDir}/${jigsaw}"
+                def dest = project.file("${buildDir}/${jigsaw}/libs")
+                outputs.dir dest
+
+                def jarCmd = "${jdkBin}/jar"
+                def create = '--create'
+                def nameOption = "--file=libs/${lib.name}-${project.version}.jar"
+                def classesDir = "tmp/${lib.name}"
+
+                if (lib.name == 'data.test') {
+                    commandLine jarCmd, create, nameOption, '--main-class=com.sample.Main', '-C', classesDir
+                } else {
+                    commandLine jarCmd, create, nameOption, '--module-version', "${project.version}", '-C', classesDir
+                }
+
+
+                doFirst {
+                    if (!dest.exists()) {
+                        dest.mkdirs()
+                    }
+                }
+            }
+        }
+
+        create('packageJigsaw') {
+            group = jigsawBuild
+            $.components.each {lib ->
+                dependsOn "${lib.name}Packaging"
             }
         }
     }
 }
 
-task dataTestExec(type: JavaExec, dependsOn: 'assemble') {
+task dataTestExec(type: JavaExec, dependsOn: 'assemble', group: 'test') {
     classpath = files(tasks.assemble.dependsOn.findAll {it instanceof BaseBinarySpec}.collect {
         [it.jarFile, it.apiJarFile]
     }.flatten().collect {it.absolutePath})
     main = 'com.sample.Main'
+}
+
+tasks.withType(JavaCompile) {
+    it.options.encoding = 'UTF-8'
+    exclude 'module-info.java'
 }
