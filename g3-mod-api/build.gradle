@@ -87,6 +87,36 @@ model {
                 dependsOn "${lib.name}Copy"
             }
         }
+        create('compileJigsaw', Exec) {
+            dependsOn copySrcTask
+            group = jigsawBuild
+
+            def destDir = file("${buildDir}/${jigsaw}/tmp")
+            outputs.dir destDir
+
+            def javac = "${projectDir}/jdk1.9.0.jdk/Contents/Home/bin/javac"
+
+            workingDir "${buildDir}/${jigsaw}"
+
+            def commands = [javac,'-d', 'tmp', '-modulesourcepath', 'src']
+
+            commands += $.components.collect {lib ->
+                lib.sources.java.source.srcDirs.collect {
+                    project.fileTree(it).files
+                }
+            }.flatten().collect {
+                it.absolutePath.replace("${projectDir}/", '').replace('/java/', '/')
+            }
+
+            commandLine commands
+
+            doFirst {
+                if (!destDir.exists()) {
+                    destDir.mkdirs()
+                }
+                println commands
+            }
+        }
     }
 }
 
@@ -100,23 +130,4 @@ task dataTestExec(type: JavaExec, dependsOn: 'assemble', group: 'test') {
 tasks.withType(JavaCompile) {
     it.options.encoding = 'UTF-8'
     exclude 'module-info.java'
-}
-
-task compileJigsaw(type: Exec, dependsOn: copySrcTask, group: jigsawBuild) {
-    def destDir = file("${buildDir}/${jigsaw}/tmp")
-    outputs.dir destDir
-
-    def javac = "${projectDir}/jdk1.9.0.jdk/Contents/Home/bin/javac"
-
-    workingDir "${buildDir}/${jigsaw}"
-
-    doFirst {
-        if (!destDir.exists()) {
-            destDir.mkdirs()
-        }
-    }
-
-    def commands = [javac,'-d', 'tmp', '-modulesourcepath', 'src']
-    commands += fileTree("${buildDir}/${jigsaw}/src").collect{it.absolutePath.replace("${buildDir}/${jigsaw}/", '')}
-    commandLine commands
 }
