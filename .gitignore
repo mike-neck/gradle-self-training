@@ -2,7 +2,7 @@
 build/
 
 *.jar
-!*/gradle/wrapper/*.jar
+!**/gradle/wrapper/*.jar
 *.class
 
 *.iml
@@ -45,3 +45,4 @@ distributed-test/distributed/src/test/java/sample/tests/**/*.java
 jigbuild/
 
 g3-mod-api/jigsaw-jdk-bin-macosx-x86_64.tar.gz
+jdk1.9.0.jdk/
