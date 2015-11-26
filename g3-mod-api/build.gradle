@@ -43,7 +43,7 @@ model {
                 java {
                     dependencies {
                         library 'data'
-                        library 'test-framework'
+                        library 'test.framework'
                     }
                 }
             }
@@ -158,9 +158,9 @@ model {
 }
 
 task dataTestExec(type: JavaExec, dependsOn: 'assemble', group: 'test') {
-    classpath = files(tasks.assemble.dependsOn.findAll {it instanceof BaseBinarySpec}.collect {
+    classpath = files(tasks.assemble.dependsOn.findAll {it instanceof JarBinarySpec}.collect {
         [it.jarFile, it.apiJarFile]
-    }.flatten().collect {it.absolutePath})
+    }.flatten())
     main = 'com.sample.Main'
 }
 
